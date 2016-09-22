@@ -1,0 +1,458 @@
+打开网址向老师领取http://www.dlimama.com/zt/index.php?uid=274
+$arr = array('2','3','4','5');
+array_map('intval' , $arr);//在拼接sql查询的时候，很有用
+array_map('htmlspecialchars' , $arr);
+向array_map传入数组，出来的还是数组，而不是上面array_reduce()的一个值。所以，array_map()最简单的就是把 callback函数作用到每个数组的值上，最常见的场景就是 intval()、trim()  数组中的值，在一些框架的源码中也经常见到
+phpstorm 快捷键：Command + O 快速查找类
+                 Command + Shift + O 快速查找文件
+                 Ctrl +b 调到代码声明处
+		 ctrl +alt+i 格式化代码
+		 alt +7 显示当前代码结构
+	         ctrl+f12 文件结构
+
+
+1、array_reduce( $arr , callable $callback )  使用回调函数迭代地将数组简化为单一的值。
+
+其中$arr 为输入数组，$callback($result , $value)接受两个参数,$result为上一次迭代产生的值，$value是当前迭代的值。
+
+使用array_reduce()替代foreach()循环最常用的一个业务场景也许就是数组求和
+
+php artisan make:migration create_users_table --create=users //创建users表
+php artisan make:migration add_votes_to_users_table --table=users //给users表增加votes字段
+
+php artisan migrate
+
+php artisan migrate --force
+
+回滚上一次的迁移
+php artisan migrate:rollback
+
+回滚所有迁移
+php artisan migrate:reset
+
+在数据库就多出了一个articles表。现在想给表中增加一个excerpt字段，我们可以执行回滚，然后修改原来的文件再执行迁移，也可以创建一个新的迁移文件：
+
+
+Copy
+php artisan make:migration add_excerpt_to_articles_table --table=articles
+
+修改新生成的文件：
+
+
+public function up()
+{
+    Schema::table('articles', function(Blueprint $table)
+    {
+        $table->text('excerpt')->nullable();
+    });
+}
+public function down()
+{
+    Schema::table('articles', function(Blueprint $table)
+    {
+        $table->dropColumn('excerpt');
+    });
+}
+
+再次执行迁移：
+
+php artisan migrate
+
+
+安装本项目跟普通安装一样
+
+下载本项目,然后在项目根目录执行 composer install
+包安装完成后,复制.env.example 文件为.env
+执行 php artisan key:generate
+迁移数据: php artisan migrate And php artisan db:seed
+OK,项目已经配置完成，后台地址：example.com/admin，不清楚的可以直接去看 routes.php 文件。默认管理员账号：admin@admin.com , 密码：123456 如果你是在Linux或Mac下配置的请注意相关目录的权限，这里我就不多说了，enjoy！
+
+$arr=array(
+    ['pro'=>'安徽','pid'=>0,'id'=>1],
+    ['pro'=>'浙江','pid'=>0,'id'=>4],
+    ['pro'=>'六安','pid'=>1,'id'=>2],
+    ['pro'=>'霍山','pid'=>2,'id'=>3],
+   
+    
+);
+
+
+function sortmenu($arr,$pid=0,$level=0,$html='-'){
+    $data=array();
+    foreach($arr as $k=>$v){
+        if($v['pid']==$pid){
+            $v['level']=$level;
+          
+            if($v['level']==0){
+                $v['html']='';
+            }else{
+                 $v['html']=str_repeat($html,$level); 
+            }
+            $data[]=$v;
+            $data=array_merge($data,sortmenu($arr,$v['id'],$level+1));
+            
+        }
+        
+        
+        
+    }
+   return $data;
+    
+}
+echo '<pre/>';
+print_r(sortmenu($arr));
+
+
+
+$arr=array(
+    ['pro'=>'安徽','pid'=>0,'id'=>1],
+    ['pro'=>'浙江','pid'=>0,'id'=>4],
+    ['pro'=>'六安','pid'=>1,'id'=>2],
+    ['pro'=>'霍山','pid'=>2,'id'=>3],
+   
+    
+);
+
+
+function sortmenu($arr,$pid=0,$level=0,$html='-'){
+    $data=array();
+    foreach($arr as $k=>$v){
+        if($v['pid']==$pid){
+            /*$v['level']=$level;
+          
+            if($v['level']==0){
+                $v['html']='';
+            }else{
+                 $v['html']=str_repeat($html,$level); 
+            }*/
+            $v['html']=str_repeat($html,$level);
+            $data[]=$v;
+            $data=array_merge($data,sortmenu($arr,$v['id'],$level+1));
+            
+        }
+        
+        
+        
+    }
+   return $data;
+    
+}
+echo '<pre/>';
+print_r(sortmenu($arr));
+
+
+function tree(&$list,$pid=0,$level=0,$html='--'){
+    static $tree = array();
+    foreach($list as $v){
+        if($v['pid'] == $pid){
+            $v['sort'] = $level;
+             $v['html'] = str_repeat($html,$level);
+            $tree[] = $v;
+            tree($list,$v['id'],$level+1);
+        } 
+    }
+    return $tree;
+}
+查看路由表信息
+
+php artisan route:list
+
+
+//laravel创建模型和数据填充
+
+php artison make:model /Models/Lession -m
+在app/Models目录下创建了一个名称为Lession的model并一并创建了lessions表的迁移文件
+
+  public function up()
+    {
+        Schema::create('lessions', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string("title",100);
+            $table->string("description")->nullable();
+            $table->text("content");
+            $table->integer("uid")->unsigned();
+            $table->tinyInteger("status")->default(0);
+            $table->tinyInteger("is_top")->default(0);
+            $table->timestamps();
+           
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::drop('lessions');
+    }
+
+执行数据迁移：php artisan migrate
+
+迁移文件里可以指定表名，在具体的model文件也可以指定具体应该对应的表
+
+在F:\laravel\database\factories里设置某个填充文件填充内容，设置如下
+Seeder
+创建seeder的命令:php artisan make:seeder LessionsSeeder
+
+$factory->define(App\Models\Lession::class, function (Faker\Generator $faker) {
+    return [
+       /* 'name' => $faker->name,
+        'email' => $faker->safeEmail,
+        'password' => bcrypt(str_random(10)),
+        'remember_token' => str_random(10),*/
+        "title"=>$faker->name,
+         'description'=>$faker->name,
+         "content"=>$faker->text,
+         "uid"=>rand(0,1000),
+         "status"=>rand(0,1),
+         "is_top"=>rand(0,1)
+    ];
+
+});
+
+
+在LessionsSeeder里面实现创建的条数
+下面的例子是创建300条
+ public function run()
+    {
+        //
+        //
+       //
+        	/*[
+       	"title"=>,
+            'description'=>,
+            "content"=>,
+             "uid"=>,
+            "status"=>
+             "is_top"=>
+            
+    		]*/
+
+       $users = factory('App\Models\Lession',300)->create([]);
+        	
+        
+    }
+还可以实现可以重写
+
+最后一步是填充数据：php artisan db:seed --class=LessionsSeeder
+
+Lession::All()
+Lession::findOrFail($id)
+model protected $hidden=['title'];
+
+\Response::json(['status','code','data'] toArray())
+
+
+return array_map(function($){
+
+	return [
+		'title'=>$lesson['title'],
+		'content'=>$lession[],
+
+		];
+
+},$arr)
+
+<?php
+
+
+$arr=array(
+    ['pro'=>'安徽','pid'=>0,'id'=>1],
+    ['pro'=>'浙江','pid'=>0,'id'=>4],
+    ['pro'=>'六安','pid'=>1,'id'=>2],
+    ['pro'=>'霍山','pid'=>2,'id'=>3],
+   
+    
+);
+ $arr1=array_map(function($new){
+    
+    return ['pro'=>$new['pro'].'test',
+		   	'code'=>200,
+			'error'=>0
+		   
+		   ];
+    
+    
+    
+},$arr);
+
+print_r($arr1);
+
+
+?>
+
+
+function tranform($lession){
+
+	return [
+		'title'=>$lession['title']
+		
+
+		];
+
+
+
+}
+
+transformcollection(){
+
+	return array_map([$this,''],$lessions->toArray())	
+}
+Command + n
+
+phpstorm 代码格式化方法：
+
+快捷键：Ctrl + Alt + L
+
+composer update
+
+if($("body").data("applycancel")=="lock"){
+  return false;
+}else{
+    $("body").data("applycancel","lock");
+}
+
+$("body").data("applycancel","unlock");
+
+protected $table = 'iphpt_view';
+    protected $primaryKey = 'id';
+    protected $fillable = [
+        'art_id',
+        'view_num',
+    ];
+    public $timestamps = false;
+
+Route::resource('article', 'ArticleController');
+
+mysqldump -u user_name -p user_password db_name > new_db_name.sql ②导出一个表 mysqldump -u user_name -p user_password database_name table_name > outfile_name.sql
+
+
+https://github.com/ycrao/mynotes/blob/master/git/git.md
+
+创建接口
+
+实现接口类
+
+服务提供者中注册，返回注册的实现抽象类
+
+创建门面,返回服务提供者中绑定的类
+
+app中配置
+
+laravel 查看版本信息 php artisan --version
+
+安装 php artisan install
+
+任务计划 看源码，看源码，看源码 静下心来
+
+laravel多对多
+hasmany
+
+对应的模型，这个模型对应的外键，这个模型的主键
+function format_date($beforetime)
+{
+	$time= time() - $beforetime;	
+	$today=strtotime(date("M-d-y",mktime(0,0,0,date("m"),date("d"),date("Y"))));
+	if($time <= 60){
+		return '刚刚';
+	}elseif($time>=60 && $time<3600){
+		$return=intval($time / 60)." 分钟前";	
+	}else{
+		if($beforetime>$today){
+			$return="今天 ".date("H:i",$beforetime);	
+		}elseif($beforetime<$today && $beforetime>($today-86400)){
+			$return="昨天 ".date("H:i",$beforetime);	
+		}else{
+			$return=date("Y-m-d H:i",$beforetime);	
+		}
+	}
+	return $return;
+}
+
+
+function str_split_utf8($str) {
+02
+    // place each character of the string into and array
+03
+    $split = 1;
+04
+    $array = array(); $len = strlen($str);
+05
+    for ( $i = 0; $i < $len; ){
+06
+        $value = ord($str[$i]);
+07
+        if($value > 127){
+08
+            if($value >= 192 && $value <= 223)
+09
+                $split = 2;
+10
+            elseif($value >= 224 && $value <= 239)
+11
+                $split = 3;
+12
+            elseif($value >= 240 && $value <= 247)
+13
+                $split = 4;
+14
+        } else {
+15
+            $split = 1;
+16
+        }
+17
+        $key = NULL;
+18
+        for ( $j = 0; $j < $split; ++$j, ++$i ) {
+19
+            $key .= $str[$i];
+20
+        }
+21
+        $array[] = $key;
+22
+        //array_push( $array, $key );  //原文此句比较低效,取消
+23
+    }
+24
+    return $array;
+25
+}
+ abort(404);
+findOrFail()
+{{ url('/articles', $article->id) }}
+{{ action('ArticlesController@show', [$article->id]) }}
+/articles/{{$article->id}}
+use Carbon\Carbon;
+
+//方法一
+        $articles = Article::latest('published_at')->get();
+        //方法二
+        //$articles = Article::orderBy('published_at', 'desc')->get();
+
+//除了主页之外
+        $this->middleware('auth', ['except' => ['index'，'show']]);
+        //只有发布页
+        //$this->middleware('auth', ['only' => 'create']);
+public function handle($request, Closure $next)
+	{
+        if($request->is('articles/create') && $request->has('foo')){
+            return redirect('articles');
+        }
+		return $next($request);
+	}
+
+
+App\Tag::lists('name');  //列出所有tags的名称
+
+
+ return $this->belongsTo('User')->select(array('id', 'username'));
+
+
+mysql添加远程用户：
+
+grant all on 数据库名.* to 用户名@localhost identified by '密码';
+grant all on gamesp.* to newuser@localhost identified by 'password';

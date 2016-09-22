@@ -1,0 +1,84 @@
+﻿lnmp环境搭建
+
+1、php-5.6.25.tar.bz2 
+
+2、mysql
+
+3、nigux
+
+ssh2
+
+find / -name pcre
+
+find / -naem openssl
+yum -y install gcc gcc-c++ autoconf automake
+yum -y install zlib zlib-devel openssl openssl-devel pcre-devel 
+ 
+./configure --prefix=/usr/local/nginx --with-pcre=/usr/nginx-1.11.3/auto/lib/pcre --with-zlib=/usr/nginx-1.11.3/auto/lib/zlib --with-openssl=/usr/include/openssl
+
+./configure  --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module
+
+./configure  --prefix=/usr/local/nginx --with-http_stub_status_module --with-http_ssl_module --with-http_gzip_static_module
+
+yum install gd zlib libxml2 libxml2-devel libjpeg libjpeg-devel libpng libpng-devel
+
+.tar.gz     格式解压为          tar   -zxvf   xx.tar.gz
+
+.tar.bz2   格式解压为          tar   -jxvf    xx.tar.bz2
+
+cp /usr/php-5.6.25/php.ini-development ./lib/php.ini
+安装php
+ ./configure --prefix=/usr/local/php \
+--with-config-file-path=/usr/local/php/etc \
+--with-gd \
+--enable-gd-native-ttf \
+--enable-gd-jis-conv \
+--with-mysql=mysqlnd \
+--enable-mysqlnd \
+--with-pdo-mysql=mysqlnd \
+--enable-fpm \
+--with-openssl\
+--with-gettext \
+--enable-mbstring \
+--with-iconv \
+--enable-sockets \
+--with-zlib \
+--enable-zip \
+--with-bz2 \
+--enable-opcache \
+--enable-fileinfo
+
+是让 PHP 作为独立的进程来运行(默认占据 9000 端口)
+如果是和 apache 配合,PHP 一般是作为 apache 的模块来使用
+# cd /usr/local/php
+# cp etc/php-fpm.conf.default etc/php-fpm.conf
+#cp /usr/local/src/php-5.5.13/php.ini-development ./lib/php.ini
+Service->service,小写
+
+cp /usr/php-5.6.25/php.ini-development ./lib/php.ini
+--with-openssl
+http://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.15.tar.gz
+
+http://ftp.nchu.edu.tw/Unix/Database/MySQL/Downloads/MySQL-5.5/mysql-5.5.30-linux2.6-x86_64.tar.gz
+
+http://ftp.nchu.edu.tw/Unix/Database/MySQL/Downloads/MySQL-5.7/mysql-5.7.15-linux2.6-x86_64.tar.gz
+
+
+
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
+-DMYSQL_DATADIR=/data/mysql \
+-DDOWNLOAD_BOOST=1 \   #从MySQL 5.7.5开始Boost库是必需的
+-DWITH_BOOST=/usr/local/mysql-5.7.15/boost_1_59_0 \
+-DSYSCONFDIR=/etc \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DWITH_PARTITION_STORAGE_ENGINE=1 \
+-DWITH_FEDERATED_STORAGE_ENGINE=1 \
+-DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
+-DWITH_MYISAM_STORAGE_ENGINE=1 \
+-DENABLED_LOCAL_INFILE=1 \
+-DENABLE_DTRACE=0 \
+-DDEFAULT_CHARSET=utf8mb4 \
+-DDEFAULT_COLLATION=utf8mb4_general_ci \
+-DWITH_EMBEDDED_SERVER=1
+
+rpm -ivh  --prefix=/usr/local/mysql

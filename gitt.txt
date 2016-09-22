@@ -1,0 +1,75 @@
+/usr/local/php/bin/phpize
+/usr/local/php/lib
+followings:追随者
+followers
+//我自己的关注，我关注了某人，我就成为了某人的粉丝
+ $redisCli->sAdd("user:$this->uid:followings",$tid);
+//这个人我的粉丝
+ $redisCli->sAdd("user:$tid:followers",$this->uid);
+我关注了某人，就在我的关注集合中增加某人的id，同时在某人的粉丝集合中增加我的id
+
+我取消关注某人，就在我的关注集合里删除某人的id ,同时在某人的粉丝里集合里删除我的id
+
+git 命令
+
+工作区、
+暂存区、
+版本库、
+
+git init 初始化工作区
+git add  提交到暂存区
+git commit 把暂存区提交到版本库，暂存区的内容就为空了
+
+git diff 文件名 比较的是暂存区与工作区的内容
+
+git diff --cached 比较的是版本库与暂存区的内容
+
+工作区文件修改了，提交到暂存区，但是没有提交到版本库，这是又修改了暂存区里面的内容
+
+git checkout -- 文件名
+
+1、在修改文件后add到暂存区之前用版本区的文件替换工作区的
+
+2、在add到缓存区后，commit到版本区之前，再一次修改文件，就用暂存区中的文件覆盖工作区
+
+3、在add到缓存区后，commit到版本区之前，再一次修改文件，如果想用版本区的文件覆盖可以有两种做法：
+
+方法一：
+
+$ git checkout HEAD hello.cpp //把暂存区清空了
+$ cat hello.cpp
+#include<iostream>
+using namespace std;
+int main()
+{
+    cout<<"快使用"<<endl;
+    return 0;
+}
+$ git status
+位于分支 master
+无文件要提交，干净的工作区
+HEAD是当前版本库的意思，这种做法顺便将暂存区清空了
+
+方法二：
+
+$ git reset HEAD 
+重置后撤出暂存区的变更：
+M   hello.cpp
+$ git checkout -- hello.cpp
+$ cat hello.cpp 
+#include<iostream>
+using namespace std;
+int main()
+{
+    cout<<"快使用"<<endl;
+    return 0;
+}
+先清空暂存区，然后再使用git checkout -- 文件名，用版本去来替换工作区，相当于case 1.
+
+git的删除与恢复操作
+在工作区，我们可以直接rm命令手动删除一个文件，但是这样在版本库里面并没有变化。
+所以我们如果想在版本库里面删除这个文件。可以不用手动删除，直接用git rm 文件名 然后git commit -m " 删除。。。
+"来提交到版本库；但是如果出现勿删还是可以恢复的
+
+
+case 1.手动删除没有提交到暂存区，使用git checkout -- 文件名，用版本区文件覆盖工作区
